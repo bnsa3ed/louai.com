@@ -90,11 +90,21 @@ body::after {
 }
 
 .nav-logo {
-    font-size: 18px;
-    font-weight: 700;
-    text-decoration: none;
-    color: var(--text-primary);
-    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+}
+
+.nav-logo img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
 }
 
 .nav-title-flipper {

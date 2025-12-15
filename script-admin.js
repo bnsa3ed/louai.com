@@ -469,6 +469,47 @@ function initForms() {
     });
   }
 
+  const toolAddForm = $("#toolAddForm");
+  if (toolAddForm) {
+    toolAddForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = $("#toolTitle")?.value || "";
+      const description = $("#toolDescription")?.value || "";
+      const tagsRaw = $("#toolTags")?.value || "";
+      const iconUrl = $("#toolIconUrl")?.value || "";
+      const previewUrl = $("#toolPreviewUrl")?.value || "";
+
+      if (!title.trim()) {
+        showToast("Title is required.", "error");
+        return;
+      }
+
+      const tags = tagsRaw
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+
+      try {
+        const res = await fetch("/api/admin/tools", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description, tags, iconUrl, previewUrl }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to add tool");
+        }
+        if (Array.isArray(data.tools)) {
+          renderToolsList(data.tools);
+        }
+        showToast("Tool added.", "success");
+        toolAddForm.reset();
+      } catch (err) {
+        console.error(err);
+        showToast("Failed to add tool.", "error");
+      }
+    });
+  }
   const photoUploadForm = $("#photoUploadForm");
   if (photoUploadForm) {
     photoUploadForm.addEventListener("submit", async (e) => {

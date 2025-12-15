@@ -85,21 +85,18 @@ async function loadSiteConfig() {
             }
         }
 
-        // Branding: favicon
+        // Branding: favicon + navbar logo image + CV links
         if (siteConfig.branding && siteConfig.branding.logoUrl) {
             const favicon = document.querySelector('link[rel="icon"]');
-            const navLogo = document.querySelector('.nav-logo');
+            const navLogoImg = document.querySelector('.nav-logo img');
             if (favicon) {
                 favicon.href = siteConfig.branding.logoUrl;
             }
-            if (navLogo) {
-                navLogo.style.backgroundImage = `url(${siteConfig.branding.logoUrl})`;
-                navLogo.style.backgroundSize = 'contain';
-                navLogo.style.backgroundRepeat = 'no-repeat';
+            if (navLogoImg) {
+                navLogoImg.src = siteConfig.branding.logoUrl;
             }
         }
 
-        // Branding: CV links (navbar + footer)
         if (siteConfig.branding && siteConfig.branding.cvUrl) {
             const resumeNav = document.getElementById('resumeBtn');
             const resumeFooter = document.querySelector('.resume-btn');
@@ -375,7 +372,7 @@ if (contactBtn && contactDropdown) {
 // Email button - Copy to clipboard
 if (contactEmailBtn && emailToast) {
     contactEmailBtn.addEventListener('click', async () => {
-        const email = 'contact@bnsaied.com';
+        const email = primaryEmail || 'contact@bnsaied.com';
 
         try {
             await navigator.clipboard.writeText(email);

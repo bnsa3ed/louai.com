@@ -160,6 +160,61 @@
         <h2 class="admin-section-title">Tools I built</h2>
         <p class="admin-help-text">Edit titles, descriptions, tags, and images for your tools.</p>
         <div id="toolsList" class="admin-list"></div>
+
+        <div class="admin-card" style="margin-top: 16px;">
+          <h3>Add tool</h3>
+          <p class="admin-help-text">
+            Create a new tool card. Icon and preview accept any public image URL (R2 or CDN).
+          </p>
+          <form id="toolAddForm" class="settings-form">
+            <div class="settings-row">
+              <div class="settings-label">Title</div>
+              <div class="settings-field">
+                <input id="toolTitle" name="toolTitle" type="text" required />
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Description</div>
+              <div class="settings-field">
+                <textarea id="toolDescription" name="toolDescription" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Tags</div>
+              <div class="settings-field">
+                <input
+                  id="toolTags"
+                  name="toolTags"
+                  type="text"
+                  placeholder="Comma separated, e.g. ExtendScript, Node.js"
+                />
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Icon URL</div>
+              <div class="settings-field">
+                <input
+                  id="toolIconUrl"
+                  name="toolIconUrl"
+                  type="url"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Preview URL</div>
+              <div class="settings-field">
+                <input
+                  id="toolPreviewUrl"
+                  name="toolPreviewUrl"
+                  type="url"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+            <button type="submit" class="admin-button secondary">Add tool</button>
+          </form>
+        </div>
       </section>
 
       <section id="section-photography" class="admin-section">
