@@ -491,7 +491,9 @@ function initLogout() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  if (window.location.pathname.endsWith("/admin.html")) {
+  const path = window.location.pathname;
+  // Support both /admin and /admin.html so that Cloudflare Pages routing works
+  if (path.endsWith("/admin") || path.endsWith("/admin.html")) {
     await ensureAuthenticated();
     initNavigation();
     initForms();
