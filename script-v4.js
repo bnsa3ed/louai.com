@@ -108,6 +108,11 @@ async function loadSiteConfig() {
             }
         }
 
+        // Tools - if any tools are defined in config, rebuild the tools grid
+        if (Array.isArray(siteConfig.tools) && siteConfig.tools.length > 0) {
+            renderDynamicTools(siteConfig.tools);
+        }
+
         // SEO tags
         if (siteConfig.seo) {
             if (siteConfig.seo.siteTitle) {
@@ -409,7 +414,6 @@ if (whatsappBtn) {
 }
 
 // Tool Modal Logic
-const toolCards = document.querySelectorAll('.tool-card');
 const modalOverlay = document.querySelector('.tool-modal-overlay');
 const modalClose = document.querySelector('.modal-close');
 const modalTitle = document.getElementById('modalTitle');
@@ -419,7 +423,10 @@ const modalTags = document.getElementById('modalTags');
 const modalPreview = document.querySelector('.modal-preview');
 const modal = document.querySelector('.tool-modal');
 
-if (toolCards.length > 0 && modalOverlay) {
+function wireToolCards() {
+    const toolCards = document.querySelectorAll('.tool-card');
+    if (!toolCards.length || !modalOverlay) return;
+
     toolCards.forEach(card => {
         card.addEventListener('click', () => {
             // Get data from attributes
@@ -431,38 +438,42 @@ if (toolCards.length > 0 && modalOverlay) {
             const tagsString = card.getAttribute('data-tags');
 
             // Update modal content
-            modalTitle.textContent = title;
-            modalDesc.textContent = desc;
-            modalIcon.src = iconSrc;
+            if (modalTitle) modalTitle.textContent = title || '';
+            if (modalDesc) modalDesc.textContent = desc || '';
+            if (modalIcon && iconSrc) modalIcon.src = iconSrc;
 
             // Update preview/gallery
-            if (gallerySrc) {
-                const images = gallerySrc.split(',');
-                let galleryHTML = '<div class="modal-gallery">';
-                images.forEach(img => {
-                    galleryHTML += `
+            if (modalPreview) {
+                if (gallerySrc) {
+                    const images = gallerySrc.split(',');
+                    let galleryHTML = '<div class="modal-gallery">';
+                    images.forEach(img => {
+                        galleryHTML += `
                         <div class="gallery-item">
-                            <img src="${img.trim()}" alt="${title} Screenshot">
+                            <img src="${img.trim()}" alt="${title || ''} Screenshot">
                         </div>
                     `;
-                });
-                galleryHTML += '</div>';
-                modalPreview.innerHTML = galleryHTML;
-                modalPreview.classList.add('has-gallery');
-            } else if (previewSrc) {
-                modalPreview.innerHTML = `<img src="${previewSrc}" alt="${title} Preview">`;
-                modalPreview.classList.remove('has-gallery');
+                    });
+                    galleryHTML += '</div>';
+                    modalPreview.innerHTML = galleryHTML;
+                    modalPreview.classList.add('has-gallery');
+                } else if (previewSrc) {
+                    modalPreview.innerHTML = `<img src="${previewSrc}" alt="${title || ''} Preview">`;
+                    modalPreview.classList.remove('has-gallery');
+                }
             }
 
             // Update tags
-            modalTags.innerHTML = '';
-            if (tagsString) {
-                const tags = tagsString.split(',');
-                tags.forEach(tag => {
-                    const span = document.createElement('span');
-                    span.textContent = tag.trim();
-                    modalTags.appendChild(span);
-                });
+            if (modalTags) {
+                modalTags.innerHTML = '';
+                if (tagsString) {
+                    const tags = tagsString.split(',');
+                    tags.forEach(tag => {
+                        const span = document.createElement('span');
+                        span.textContent = tag.trim();
+                        modalTags.appendChild(span);
+                    });
+                }
             }
 
             modalOverlay.classList.add('active');
@@ -475,7 +486,9 @@ if (toolCards.length > 0 && modalOverlay) {
     if (modal) {
         modal.setAttribute('data-lenis-prevent', '');
     }
+}
 
+if (modalOverlay) {
     const closeModal = () => {
         modalOverlay.classList.remove('active');
         document.body.style.overflow = '';
@@ -486,11 +499,9 @@ if (toolCards.length > 0 && modalOverlay) {
         modalClose.addEventListener('click', closeModal);
     }
 
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) closeModal();
-        });
-    }
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+    });
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
@@ -830,4 +841,47 @@ if (photoGalleryModal) {
             }
         });
     }
+}
+
+// Dynamically render tools grid from config
+function renderDynamicTools(tools) {
+    const grid = document.querySelector('.tools-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+
+    tools.forEach((tool) => {
+        const card = document.createElement('div');
+        card.className = 'tool-card';
+        card.setAttribute('data-tool', tool.id || '');
+        if (tool.title) card.setAttribute('data-title', tool.title);
+        if (tool.description) card.setAttribute('data-desc', tool.description);
+        if (tool.iconUrl) card.setAttribute('data-icon', tool.iconUrl);
+        if (tool.previewUrl) card.setAttribute('data-preview', tool.previewUrl);
+        if (Array.isArray(tool.tags)) {
+            card.setAttribute('data-tags', tool.tags.join(','));
+        }
+
+        const iconSrc =
+            tool.iconUrl || 'https://cdn.bnsaied.com/icons/pr-icon.png';
+        const tagsArray = Array.isArray(tool.tags) ? tool.tags : [];
+
+        card.innerHTML = `
+          <div class="tool-icon">
+            <img src="${iconSrc}" alt="${tool.title || 'Tool'}" loading="lazy" width="40" height="40">
+          </div>
+          <h3>${tool.title || 'Tool'}</h3>
+          <p>${tool.description || ''}</p>
+          <div class="tool-tags">
+            ${tagsArray
+              .map((tag) => `<span>${tag}</span>`)
+              .join('')}
+          </div>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    // Re-wire modal clicks for new cards
+    wireToolCards();
 }
