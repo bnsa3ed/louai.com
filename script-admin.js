@@ -370,28 +370,51 @@ function initForms() {
   if (brandingForm) {
     brandingForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const heroInput = $("#heroImage");
       const logoInput = $("#logoFile");
       const cvInput = $("#cvFile");
-      const formData = new FormData();
-      if (logoInput && logoInput.files && logoInput.files.length > 0) {
-        formData.append("logoFile", logoInput.files[0]);
-      }
-      if (cvInput && cvInput.files && cvInput.files.length > 0) {
-        formData.append("cvFile", cvInput.files[0]);
-      }
-      if (!formData.has("logoFile") && !formData.has("cvFile")) {
-        showToast("Please choose a logo and/or CV file.", "error");
+
+      const hasHero =
+        heroInput && heroInput.files && heroInput.files.length > 0;
+      const hasLogo =
+        logoInput && logoInput.files && logoInput.files.length > 0;
+      const hasCv = cvInput && cvInput.files && cvInput.files.length > 0;
+
+      if (!hasHero && !hasLogo && !hasCv) {
+        showToast("Please choose at least one file to upload.", "error");
         return;
       }
+
       try {
-        await fetch("/api/admin/upload/branding", {
-          method: "POST",
-          body: formData,
-        });
-        showToast("Brand assets uploaded.", "success");
+        // Upload hero image if provided
+        if (hasHero) {
+          const heroFormData = new FormData();
+          heroFormData.append("file", heroInput.files[0]);
+          await fetch("/api/admin/upload/hero-image", {
+            method: "POST",
+            body: heroFormData,
+          });
+        }
+
+        // Upload logo/CV if provided
+        if (hasLogo || hasCv) {
+          const brandingFormData = new FormData();
+          if (hasLogo) {
+            brandingFormData.append("logoFile", logoInput.files[0]);
+          }
+          if (hasCv) {
+            brandingFormData.append("cvFile", cvInput.files[0]);
+          }
+          await fetch("/api/admin/upload/branding", {
+            method: "POST",
+            body: brandingFormData,
+          });
+        }
+
+        showToast("Assets uploaded.", "success");
       } catch (err) {
         console.error(err);
-        showToast("Failed to upload brand assets.", "error");
+        showToast("Failed to upload assets.", "error");
       }
     });
   }
