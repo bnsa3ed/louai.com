@@ -112,6 +112,7 @@ body::after {
     height: 16px;
     overflow: hidden;
     position: relative;
+    margin-top: 2px; /* tighter gap between logo and rotating titles */
 }
 
 .flipper-content {
