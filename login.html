@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Admin Dashboard</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="stylesheet" href="styles-admin.css" />
+</head>
+<body class="admin-body admin-auth-bg">
+  <div class="admin-auth-wrapper">
+    <div class="admin-auth-card">
+      <h1 class="admin-auth-title">Admin login</h1>
+      <p class="admin-auth-subtitle">Sign in to manage your portfolio content.</p>
+      <form id="loginForm" class="settings-form login-form">
+        <div class="settings-row">
+          <div class="settings-label">Username</div>
+          <div class="settings-field">
+            <input id="username" name="username" type="text" autocomplete="username" required />
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Password</div>
+          <div class="settings-field">
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+          </div>
+        </div>
+        <button type="submit" class="admin-button primary admin-button-full">Continue</button>
+      </form>
+      <p id="loginError" class="admin-error-text" style="display:none;"></p>
+      <p class="admin-auth-hint">Temporary local access: <span>admin / admin</span></p>
+    </div>
+  </div>
+
+  <div id="toast" class="admin-toast"></div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorText = document.getElementById('loginError');
+    const toast = document.getElementById('toast');
+
+    function showToast(message, type = 'info') {
+      toast.textContent = message;
+      toast.className = 'admin-toast ' + type + ' show';
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorText.style.display = 'none';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          // Fallback path for local dev where /api/login is not available
+          if (res.status === 501 || res.status === 404) {
+            if (username === 'admin' && password === 'admin') {
+              document.cookie = 'admin_session=1; path=/';
+              showToast('Logged in locally.', 'success');
+              setTimeout(() => {
+                window.location.href = '/admin.html';
+              }, 300);
+              return;
+            }
+          }
+
+          const msg = data.error || 'Login failed. Please try again.';
+          errorText.textContent = msg;
+          errorText.style.display = 'block';
+          showToast(msg, 'error');
+          return;
+        }
+
+        showToast('Logged in successfully.', 'success');
+        // Small delay so the toast is visible
+        setTimeout(() => {
+          window.location.href = '/admin.html';
+        }, 500);
+      } catch (err) {
+        // If the backend is not reachable (e.g. python http.server), use local fallback
+        if (username === 'admin' && password === 'admin') {
+          document.cookie = 'admin_session=1; path=/';
+          showToast('Logged in locally.', 'success');
+          setTimeout(() => {
+            window.location.href = '/admin.html';
+          }, 300);
+          return;
+        }
+
+        const msg = 'Network error. Please try again.';
+        errorText.textContent = msg;
+        errorText.style.display = 'block';
+        showToast(msg, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
+
+

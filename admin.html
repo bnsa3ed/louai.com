@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="styles-admin.css" />
+</head>
+<body class="admin-body admin-dashboard-bg">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <span class="admin-logo-dot"></span>
+        <span class="admin-sidebar-title">Dashboard</span>
+      </div>
+      <nav class="admin-nav">
+        <button class="admin-nav-item active" data-section="hero">Hero & Branding</button>
+        <button class="admin-nav-item" data-section="media">Media</button>
+        <button class="admin-nav-item" data-section="tools">Tools</button>
+        <button class="admin-nav-item" data-section="photography">Photography</button>
+        <button class="admin-nav-item" data-section="contact">Contact & Social</button>
+        <button class="admin-nav-item" data-section="seo">SEO</button>
+      </nav>
+      <button id="logoutBtn" class="admin-logout">Logout</button>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-main-header">
+        <div>
+          <h1 class="admin-main-title">Site settings</h1>
+          <p class="admin-main-subtitle">Manage hero, media, tools, photography, and contact details.</p>
+        </div>
+        <div id="adminUser" class="admin-user-pill"></div>
+      </header>
+
+
+      <section id="section-hero" class="admin-section active">
+        <h2 class="admin-section-title">Hero & Branding</h2>
+        <div class="admin-section-subtitle">
+          Control the first impression: hero copy, image, logo, CV and tech icons.
+        </div>
+
+        <div class="admin-grid hero-grid">
+          <div class="admin-card">
+            <h3>Hero content</h3>
+            <p class="admin-help-text">Update the main headline and supporting copy that appears above the fold.</p>
+            <form id="heroTextForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">Title line 1</div>
+                <div class="settings-field">
+                  <input id="heroTitle1" name="heroTitle1" type="text" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Title line 2</div>
+                <div class="settings-field">
+                  <input id="heroTitle2" name="heroTitle2" type="text" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Subtitle</div>
+                <div class="settings-field">
+                  <textarea id="heroSubtitle" name="heroSubtitle" rows="2"></textarea>
+                </div>
+              </div>
+              <button type="submit" class="admin-button primary">Save hero content</button>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h3>Brand assets & tech stack</h3>
+            <p class="admin-help-text">Logo, CV, hero image and tech icons reused across the site.</p>
+
+            <form id="brandingForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">Hero image</div>
+                <div class="settings-field">
+                  <input id="heroImage" name="heroImage" type="file" accept="image/*" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Logo file</div>
+                <div class="settings-field">
+                  <input id="logoFile" name="logoFile" type="file" accept="image/*" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">CV (PDF)</div>
+                <div class="settings-field">
+                  <input id="cvFile" name="cvFile" type="file" accept="application/pdf" />
+                </div>
+              </div>
+              <button type="submit" class="admin-button secondary">Upload assets</button>
+            </form>
+
+            <div class="admin-divider"></div>
+
+            <p class="admin-help-text">Tech stack icons shown in the animated bar under the hero image.</p>
+            <div id="techList" class="admin-list"></div>
+            <form id="techAddForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">Label</div>
+                <div class="settings-field">
+                  <input id="techLabel" name="techLabel" type="text" placeholder="Tool name" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Icon</div>
+                <div class="settings-field">
+                  <input id="techIcon" name="techIcon" type="file" accept="image/*" />
+                </div>
+              </div>
+              <button type="submit" class="admin-button secondary">Add icon</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-media" class="admin-section">
+        <h2 class="admin-section-title">Media</h2>
+        <div class="admin-grid">
+          <div class="admin-card">
+            <h3>Showreel video</h3>
+            <p class="admin-help-text">Upload the main showreel video used in the hero section.</p>
+            <form id="showreelForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">Showreel (MP4/MOV)</div>
+                <div class="settings-field">
+                  <input id="showreelFile" name="showreelFile" type="file" accept="video/*" />
+                </div>
+              </div>
+              <button type="submit" class="admin-button secondary">Upload showreel</button>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h3>Viral reels</h3>
+            <p class="admin-help-text">Manage short reels and their display names.</p>
+            <div id="reelsList" class="admin-list"></div>
+            <form id="reelAddForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">Reel title</div>
+                <div class="settings-field">
+                  <input id="reelTitle" name="reelTitle" type="text" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Reel video</div>
+                <div class="settings-field">
+                  <input id="reelFile" name="reelFile" type="file" accept="video/*" />
+                </div>
+              </div>
+              <button type="submit" class="admin-button secondary">Add reel</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-tools" class="admin-section">
+        <h2 class="admin-section-title">Tools I built</h2>
+        <p class="admin-help-text">Edit titles, descriptions, tags, and images for your tools.</p>
+        <div id="toolsList" class="admin-list"></div>
+      </section>
+
+      <section id="section-photography" class="admin-section">
+        <h2 class="admin-section-title">Photography</h2>
+        <p class="admin-help-text">Add categories and upload images to each category.</p>
+        <div class="admin-card">
+          <h3>Categories</h3>
+          <p class="admin-help-text">Existing categories and their image counts.</p>
+          <div id="photoCategoriesList" class="admin-list"></div>
+
+          <div class="admin-divider"></div>
+
+          <h3>Add / edit category</h3>
+          <form id="photoCategoryForm" class="settings-form">
+            <div class="settings-row">
+              <div class="settings-label">Category name</div>
+              <div class="settings-field">
+                <input id="photoCategoryName" name="photoCategoryName" type="text" placeholder="e.g. Products" />
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Slug (optional)</div>
+              <div class="settings-field">
+                <input id="photoCategorySlug" name="photoCategorySlug" type="text" placeholder="products" />
+              </div>
+            </div>
+            <button type="submit" class="admin-button secondary">Save category</button>
+          </form>
+
+          <div class="admin-divider"></div>
+
+          <h3>Upload images</h3>
+          <form id="photoUploadForm" class="settings-form">
+            <div class="settings-row">
+              <div class="settings-label">Target category</div>
+              <div class="settings-field">
+                <select id="photoCategorySelect" name="photoCategorySelect">
+                  <!-- options will be populated from config later -->
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Images</div>
+              <div class="settings-field">
+                <input id="photoFiles" name="photoFiles" type="file" accept="image/*" multiple />
+              </div>
+            </div>
+            <button type="submit" class="admin-button secondary">Upload photos</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="section-contact" class="admin-section">
+        <h2 class="admin-section-title">Contact & social</h2>
+        <div class="admin-grid">
+          <div class="admin-card">
+            <h3>Contact</h3>
+            <form id="contactForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">Primary email</div>
+                <div class="settings-field">
+                  <input id="contactEmail" name="contactEmail" type="email" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">WhatsApp number (without +)</div>
+                <div class="settings-field">
+                  <input id="whatsappNumber" name="whatsappNumber" type="text" />
+                </div>
+              </div>
+              <button type="submit" class="admin-button primary">Save contact</button>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h3>Social links</h3>
+            <form id="socialForm" class="settings-form">
+              <div class="settings-row">
+                <div class="settings-label">LinkedIn URL</div>
+                <div class="settings-field">
+                  <input id="socialLinkedin" name="socialLinkedin" type="url" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Instagram URL</div>
+                <div class="settings-field">
+                  <input id="socialInstagram" name="socialInstagram" type="url" />
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Behance URL</div>
+                <div class="settings-field">
+                  <input id="socialBehance" name="socialBehance" type="url" />
+                </div>
+              </div>
+              <button type="submit" class="admin-button primary">Save social links</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-seo" class="admin-section">
+        <h2 class="admin-section-title">SEO & Metadata</h2>
+        <div class="admin-card">
+          <form id="seoForm" class="settings-form">
+            <div class="settings-row">
+              <div class="settings-label">Site title</div>
+              <div class="settings-field">
+                <input id="siteTitle" name="siteTitle" type="text" />
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Meta description</div>
+              <div class="settings-field">
+                <textarea id="metaDescription" name="metaDescription" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Keywords (comma separated)</div>
+              <div class="settings-field">
+                <input id="metaKeywords" name="metaKeywords" type="text" />
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Canonical URL</div>
+              <div class="settings-field">
+                <input id="canonicalUrl" name="canonicalUrl" type="url" />
+              </div>
+            </div>
+            <button type="submit" class="admin-button primary">Save SEO</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="admin-toast"></div>
+  <div id="overlay" class="admin-overlay hidden">
+    <div class="admin-overlay-spinner"></div>
+  </div>
+
+  <script src="script-admin.js"></script>
+</body>
+</html>
+
+
