@@ -59,6 +59,28 @@ export async function onRequest(context) {
     hero = null;
   }
 
+  // Best-effort cleanup of previous hero image
+  if (hero && hero.imageUrl) {
+    try {
+      let oldKey = null;
+      const oldUrl = hero.imageUrl;
+      if (publicBase && oldUrl.startsWith(publicBase + '/')) {
+        oldKey = oldUrl.slice(publicBase.length + 1);
+      } else {
+        const marker = '/louaimedia/';
+        const idx = oldUrl.indexOf(marker);
+        if (idx !== -1) {
+          oldKey = oldUrl.slice(idx + marker.length);
+        }
+      }
+      if (oldKey) {
+        await bucket.delete(oldKey);
+      }
+    } catch (_cleanupErr) {
+      // Ignore cleanup failures
+    }
+  }
+
   const updatedHero = {
     ...(hero || {}),
     imageUrl: url,

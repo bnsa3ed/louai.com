@@ -39,6 +39,47 @@ export async function onRequest(context) {
   let logoUrl = null;
   let cvUrl = null;
 
+  // Load existing branding before overwriting so we can clean up old files
+  let branding = null;
+  try {
+    const raw = await kv.get('settings:branding');
+    if (raw) branding = JSON.parse(raw);
+  } catch (_err) {
+    branding = null;
+  }
+
+  // Delete previous logo / CV if they exist and are being replaced
+  async function deleteIfReplaced(existingUrl, isReplacing) {
+    if (!existingUrl || !isReplacing) return;
+    try {
+      let oldKey = null;
+      if (publicBase && existingUrl.startsWith(publicBase + '/')) {
+        oldKey = existingUrl.slice(publicBase.length + 1);
+      } else {
+        const marker = '/louaimedia/';
+        const idx = existingUrl.indexOf(marker);
+        if (idx !== -1) {
+          oldKey = existingUrl.slice(idx + marker.length);
+        }
+      }
+      if (oldKey) {
+        await bucket.delete(oldKey);
+      }
+    } catch (_cleanupErr) {
+      // ignore cleanup errors
+    }
+  }
+
+  const isReplacingLogo = !!(logoFile && typeof logoFile !== 'string');
+  const isReplacingCv = !!(cvFile && typeof cvFile !== 'string');
+
+  if (branding) {
+    await Promise.all([
+      deleteIfReplaced(branding.logoUrl, isReplacingLogo),
+      deleteIfReplaced(branding.cvUrl, isReplacingCv),
+    ]);
+  }
+
   if (logoFile && typeof logoFile !== 'string') {
     const logoName = logoFile.name || 'logo.png';
     const logoExt = logoName.includes('.') ? logoName.split('.').pop() : 'png';
@@ -53,14 +94,6 @@ export async function onRequest(context) {
     const cvKey = `cv/cv-${Date.now()}.${cvExt}`;
     await bucket.put(cvKey, cvFile.stream());
     cvUrl = publicBase ? `${publicBase}/${cvKey}` : cvKey;
-  }
-
-  let branding = null;
-  try {
-    const raw = await kv.get('settings:branding');
-    if (raw) branding = JSON.parse(raw);
-  } catch (_err) {
-    branding = null;
   }
 
   const updatedBranding = {

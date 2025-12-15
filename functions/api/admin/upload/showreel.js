@@ -50,6 +50,32 @@ export async function onRequest(context) {
 
   const url = publicBase ? `${publicBase}/${key}` : key;
 
+  // Best-effort cleanup of previous showreel
+  try {
+    const raw = await kv.get('settings:showreel');
+    if (raw) {
+      const prev = JSON.parse(raw);
+      if (prev && prev.videoUrl) {
+        let oldKey = null;
+        const oldUrl = prev.videoUrl;
+        if (publicBase && oldUrl.startsWith(publicBase + '/')) {
+          oldKey = oldUrl.slice(publicBase.length + 1);
+        } else {
+          const marker = '/louaimedia/';
+          const idx = oldUrl.indexOf(marker);
+          if (idx !== -1) {
+            oldKey = oldUrl.slice(idx + marker.length);
+          }
+        }
+        if (oldKey) {
+          await bucket.delete(oldKey);
+        }
+      }
+    }
+  } catch (_cleanupErr) {
+    // ignore cleanup failures
+  }
+
   const payload = {
     videoUrl: url,
   };
