@@ -93,9 +93,9 @@ body::after {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
-    /* No rounded border or background; let the logo itself define the shape */
+    /* Let the logo image define the exact size; no extra vertical padding */
+    width: auto;
+    height: auto;
     border-radius: 0;
     background: transparent;
     border: none;
@@ -112,7 +112,7 @@ body::after {
     height: 16px;
     overflow: hidden;
     position: relative;
-    margin-top: 2px; /* tighter gap between logo and rotating titles */
+    margin-top: -2px; /* lift titles closer to logo */
 }
 
 .flipper-content {
