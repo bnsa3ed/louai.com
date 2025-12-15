@@ -31,6 +31,26 @@ async function loadSiteConfig() {
             }
         }
 
+        // Hero image + text
+        if (siteConfig.hero) {
+            const heroImg = document.querySelector('.hero-portrait');
+            if (heroImg && siteConfig.hero.imageUrl) {
+                heroImg.src = siteConfig.hero.imageUrl;
+            }
+            const titleLine1El = document.querySelector('.hero-title .hero-line:nth-child(1)');
+            const titleLine2El = document.querySelector('.hero-title .hero-line:nth-child(2)');
+            if (titleLine1El && siteConfig.hero.titleLine1) {
+                // Preserve icon if present
+                const icon = titleLine1El.querySelector('img');
+                titleLine1El.textContent = siteConfig.hero.titleLine1 + ' ';
+                if (icon) titleLine1El.appendChild(icon);
+            }
+            if (titleLine2El && (siteConfig.hero.titleLine2 || siteConfig.hero.subtitle)) {
+                titleLine2El.textContent =
+                    siteConfig.hero.titleLine2 || siteConfig.hero.subtitle;
+            }
+        }
+
         // Apply contact email to hero "Open to Work" button and footer/email copy
         const openWorkBtn = document.querySelector('.btn-open-work');
         if (openWorkBtn && primaryEmail) {
@@ -68,8 +88,26 @@ async function loadSiteConfig() {
         // Branding: favicon
         if (siteConfig.branding && siteConfig.branding.logoUrl) {
             const favicon = document.querySelector('link[rel="icon"]');
+            const navLogo = document.querySelector('.nav-logo');
             if (favicon) {
                 favicon.href = siteConfig.branding.logoUrl;
+            }
+            if (navLogo) {
+                navLogo.style.backgroundImage = `url(${siteConfig.branding.logoUrl})`;
+                navLogo.style.backgroundSize = 'contain';
+                navLogo.style.backgroundRepeat = 'no-repeat';
+            }
+        }
+
+        // Branding: CV links (navbar + footer)
+        if (siteConfig.branding && siteConfig.branding.cvUrl) {
+            const resumeNav = document.getElementById('resumeBtn');
+            const resumeFooter = document.querySelector('.resume-btn');
+            if (resumeNav) {
+                resumeNav.href = siteConfig.branding.cvUrl;
+            }
+            if (resumeFooter) {
+                resumeFooter.href = siteConfig.branding.cvUrl;
             }
         }
 
